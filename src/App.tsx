@@ -1,24 +1,69 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { ChangeEvent, FC, useState } from 'react';
 import './App.css';
+import { ITask } from "./interfaces"
 
-function App() {
+const App: FC = () => {
+
+  const [task, setTask] = useState<string>("");
+  const [todoList, setTodoList] = useState<ITask[]>([])
+
+  // function calls
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setTask(event.target.value)
+  }
+
+  const handleSubmit = (): void => {
+    setTodoList([...todoList, {taskName:task}])
+    setTask("")
+
+  }
+  const deleteTask = (taskToDelete: string): void => {
+    console.log(taskToDelete, "task")
+    setTodoList(todoList.filter((each) => {
+      return each.taskName !== taskToDelete
+    }))
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className='header'>
+        <div>
+          <input type="text" value={task} placeholder="Enter the Task" onChange={handleChange} ></input>
+          <button onClick={handleSubmit}>Add Task </button>
+        </div>
+      </div>
+      <div className='todoContainer' >
+        <table className="table">
+          <thead>
+            <tr>
+              <th scope="col">sl.no</th>
+              <th scope="col">Task</th>
+              <th scope="col">Action</th>
+
+            </tr>
+          </thead>
+          {
+            todoList.map((each: ITask, index: number) => {
+
+              return (<>
+
+                <tbody>
+                  <tr className="table-light">
+                    <th scope="row">{index+1}</th>
+                    <td key={index}>{each.taskName}</td>
+                    <td> <button onClick={() => deleteTask(each.taskName)}>Delete</button></td>
+                  </tr>
+
+                </tbody>
+
+
+              </>
+              )
+            })
+          }
+        </table>
+      </div>
     </div>
   );
 }
